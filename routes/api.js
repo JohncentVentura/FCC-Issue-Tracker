@@ -1,7 +1,7 @@
 "use strict";
 
-const IssueModel = require("../models").Issue;
-const ProjectModel = require("../models").Project;
+const IssueModel = require("../database/models").Issue;
+const ProjectModel = require("../database/models").Project;
 
 module.exports = function (app) {
   app

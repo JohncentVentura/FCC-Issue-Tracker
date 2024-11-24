@@ -6,12 +6,11 @@ const expect      = require('chai').expect;
 const cors        = require('cors');
 require('dotenv').config();
 
-//Script for handling database connection
-require('./db-connection.js');
-
 const apiRoutes         = require('./routes/api.js');
 const fccTestingRoutes  = require('./routes/fcctesting.js');
 const runner            = require('./test-runner');
+
+require("./database/connection.js");
 
 let app = express();
 
