@@ -8,11 +8,10 @@ const IssueModel = require("../database/models").Issue;
 
 chai.use(chaiHttp);
 
-let issue1 = "01";
+let issue1;
 let issue2;
 suite("Functional Tests", function () {
   suite("Routing Tests", function () {
-    //this.timeout(5000);
     suite("3 Post request Tests", function () {
       test("Create an issue with every field: POST request to /api/issues/{project}", function (done) {
         chai
@@ -36,17 +35,16 @@ suite("Functional Tests", function () {
           });
 
         //NOTE: Assigning res.body to issue1 does not work in .end() above
-        //also done() in .end() doesn't call .end(), so it was called outside
         chai
           .request(server)
           .get("/api/issues/chaitest")
           .end(function (err, res) {
             assert.equal(res.status, 200);
             issue1 = res.body[res.body.length - 1];
-            //console.log("issue1: ", issue1);
+            console.log("issue1: ", issue1);
+            done();
           });
-        done();
-      });
+      }); //.timeout(10000);
 
       test("Create an issue with only required fields: POST request to /api/issues/{project}", function (done) {
         chai
@@ -70,17 +68,16 @@ suite("Functional Tests", function () {
           });
 
         //NOTE: Assigning res.body to issue1 does not work in .end() above
-        //also done() in .end() doesn't call .end(), so it was called outside
         chai
           .request(server)
           .get("/api/issues/chaitest")
           .end(function (err, res) {
             assert.equal(res.status, 200);
-            issue2 = res.body[res.body.length - 2];
-            //console.log("issue2: ", issue2);
+            issue2 = res.body[res.body.length - 3];
+            console.log("issue2: ", issue2);
+            done();
           });
-        done();
-      });
+      }); //.timeout(5000);
 
       test("Create an issue with missing required fields: POST request to /api/issues/{project}", function (done) {
         chai
@@ -100,7 +97,7 @@ suite("Functional Tests", function () {
             done();
           });
       });
-    });
+    }); //.timeout(5000);
 
     suite("3 Get request Tests", function () {
       test("View issues on a project: GET request to /api/issues/{project}", function (done) {
@@ -236,6 +233,7 @@ suite("Functional Tests", function () {
           .end(function (err, res) {
             assert.equal(res.status, 200);
             assert.equal(res.body.result, "successfully deleted");
+            assert.equal(res.body._id, issue1._id);
           });
 
         chai
@@ -247,9 +245,9 @@ suite("Functional Tests", function () {
           .end(function (err, res) {
             assert.equal(res.status, 200);
             assert.equal(res.body.result, "successfully deleted");
+            assert.equal(res.body._id, issue2._id);
+            done();
           });
-
-        done();
       });
 
       test("Delete an issue with an invalid _id: DELETE request to /api/issues/{project}", function (done) {

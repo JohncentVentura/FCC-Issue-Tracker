@@ -8,7 +8,6 @@ module.exports = function (app) {
     .route("/api/issues/:project")
 
     .get(async (req, res) => {
-      //projectName is apitest
       let projectName = req.params.project;
 
       try {
@@ -65,8 +64,9 @@ module.exports = function (app) {
           open: true,
           status_text: status_text || "",
         });
-        //const issue = await issueModel.save();
+
         issueModel = await issueModel.save();
+        res.json(issueModel);
       } catch (err) {
         res.json({ error: `!projectName ${projectName}` });
         return;
@@ -85,7 +85,7 @@ module.exports = function (app) {
         open,
       } = req.body;
 
-      if (!_id) {
+      if (!_id || _id === "") {
         res.json({ error: "missing _id" });
         return;
       }
@@ -98,12 +98,13 @@ module.exports = function (app) {
         !status_text &&
         !open
       ) {
-        res.json({ error: 'no update field(s) sent', '_id': _id });
+        res.json({ error: "no update field(s) sent", _id: _id });
         return;
       }
 
       try {
         const projectModel = await ProjectModel.findOne({ name: projectName });
+
         if (!projectModel) {
           throw new Error(`!projectName ${projectName}`);
         }
@@ -112,19 +113,17 @@ module.exports = function (app) {
           ...req.body,
           updated_on: new Date(),
         });
-        await issue.save();
-        res.json({  result: 'successfully updated', '_id': _id });
 
+        await issue.save();
+        res.json({ result: "successfully updated", _id: _id });
       } catch (err) {
-        res.json({ error: 'could not update', '_id': _id });
+        res.json({ error: "could not update", _id: _id });
       }
     })
 
     .delete(async (req, res) => {
       let projectName = req.params.project;
-      const {
-        _id,
-      } = req.body;
+      const { _id } = req.body;
 
       if (!_id) {
         res.json({ error: "missing _id" });
@@ -137,11 +136,8 @@ module.exports = function (app) {
           throw new Error(`!projectName ${projectName}`);
         }
 
-        let issueModel = await IssueModel.findByIdAndDelete({
-          _id: _id
-        });
+        const issue = await IssueModel.findByIdAndDelete(_id);
         res.json({ result: "successfully deleted", _id: _id });
-
       } catch (err) {
         res.json({ error: "could not delete", _id: _id });
       }
