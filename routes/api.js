@@ -1,5 +1,7 @@
 "use strict";
 
+const { Issue } = require("../database/models");
+
 const IssueModel = require("../database/models").Issue;
 const ProjectModel = require("../database/models").Project;
 
@@ -126,7 +128,7 @@ module.exports = function (app) {
       const { _id } = req.body;
 
       if (!_id) {
-        res.json({ error: "missing _id" });
+        res.json({ error: 'missing _id' });
         return;
       }
 
@@ -137,9 +139,10 @@ module.exports = function (app) {
         }
 
         const issue = await IssueModel.findByIdAndDelete(_id);
-        res.json({ result: "successfully deleted", _id: _id });
-      } catch (err) {
-        res.json({ error: "could not delete", _id: _id });
+        console.log(`issue `, issue._id,`: `,issue);
+        res.json({ result: 'successfully deleted', '_id': _id });
+      } catch (error) {
+        res.json({ error: 'could not delete', '_id': _id });
       }
     });
 };
